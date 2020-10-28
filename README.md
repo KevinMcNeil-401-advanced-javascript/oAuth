@@ -29,12 +29,13 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 ```
 
 ### env Requirements:
+
 PORT=3001 
+
 CLIENT_ID=
+
 CLIENT_SECRET=
+
 REDIRECT_URL=
 
 ### UML:
-
-
-

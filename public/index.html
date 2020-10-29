@@ -23,13 +23,15 @@
         </div>
         <script>
 
-            let URL = "https://github.com/login/oauth/authorize";
+            let URL = "https://public-api.wordpress.com/oauth2/authorize";
         
             let options = {
+ oauth
               client_id: '70889',
               redirect_uri: '	http://localhost3000/',
               scope: 'read:user',
               state: 'asldfjdfs'
+ main
             }
         
             let QueryString = Object.keys(options).map((key) => {

@@ -8,8 +8,10 @@ const users = require('./users.js');
   https://developer.github.com/apps/building-oauth-apps/
 */
 
+
 const tokenServerUrl = process.env.TOKEN_SERVER;
 //const tokenServerUrl = 'https://public-api.wordpress.com/oauth2/token';
+
 const remoteAPI = process.env.REMOTE_API;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -37,11 +39,12 @@ module.exports = async function authorize(req, res, next) {
 
 }
 
+
 function exchangeCodeForToken(code) {
   let array = [CLIENT_ID, API_SERVER, CLIENT_SECRET, code, 'authorization_code'];
   let object = {
+
     client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET,
     redirect_uri: API_SERVER,
     grant_type: 'authorization_code',
     code: code
@@ -49,6 +52,8 @@ function exchangeCodeForToken(code) {
     superagent.post('https://public-api.wordpress.com/oauth2/token').send(array)
       .then(response => console.log(response))
       .catch(e => console.error(e))
+
+
 
 }
 

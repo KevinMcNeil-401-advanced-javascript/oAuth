@@ -9,6 +9,7 @@ const users = require('./users.js');
 */
 
 const tokenServerUrl = process.env.TOKEN_SERVER;
+//const tokenServerUrl = 'https://public-api.wordpress.com/oauth2/token';
 const remoteAPI = process.env.REMOTE_API;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -20,7 +21,7 @@ module.exports = async function authorize(req, res, next) {
     let code = req.query.code;
     console.log('(1) CODE:', code);
 
-    let remoteToken = await exchangeCodeForToken(code);
+    let remoteToken = exchangeCodeForToken(code);
     console.log('(2) ACCESS TOKEN:', remoteToken)
 
     let remoteUser = await getRemoteUserInfo(remoteToken);
@@ -36,19 +37,18 @@ module.exports = async function authorize(req, res, next) {
 
 }
 
-async function exchangeCodeForToken(code) {
-
-  let tokenResponse = await superagent.post(tokenServerUrl).send({
-    code: code,
+function exchangeCodeForToken(code) {
+  let array = [CLIENT_ID, API_SERVER, CLIENT_SECRET, code, 'authorization_code'];
+  let object = {
     client_id: CLIENT_ID,
     client_secret: CLIENT_SECRET,
     redirect_uri: API_SERVER,
     grant_type: 'authorization_code',
-  })
-
-  let access_token = tokenResponse.body.access_token;
-
-  return access_token;
+    code: code
+  }
+    superagent.post('https://public-api.wordpress.com/oauth2/token').send(array)
+      .then(response => console.log(response))
+      .catch(e => console.error(e))
 
 }
 

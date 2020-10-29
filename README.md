@@ -1,7 +1,7 @@
 # oAuth
  Using OAuth to manage user credentials instead of managing user names and passwords internally
 
- **Author: Riva Davidowski**
+ **Author: Kevin McNeil, Sara Russert, czarl Jalos, Riva Davidowski**
 
 **An Express/Node.js based server using a custom “authentication” module that is designed to handle user registration and sign in using Basic, Bearer, or OAuth along with a custom “authorization” module**
 
@@ -17,6 +17,7 @@ You will need to install the following on your machine:
     - `dotenv`
     - `cors`
     -  `express`
+    - `superagent`
 Start server:
    
 ```
@@ -30,7 +31,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 ### env Requirements:
 
-PORT=3001 
+PORT=3000
 
 CLIENT_ID=
 

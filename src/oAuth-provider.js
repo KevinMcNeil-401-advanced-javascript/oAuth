@@ -10,7 +10,7 @@ const users = require('./users.js');
 
 const tokenServerUrl = process.env.TOKEN_SERVER;
 //const tokenServerUrl = 'https://public-api.wordpress.com/oauth2/token';
-const remoteAPI = process.env.REMOTE_API;
+const USER_URL = process.env.USER_URL;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const API_SERVER = process.env.API_SERVER;
@@ -21,11 +21,11 @@ module.exports = async function authorize(req, res, next) {
     let code = req.query.code;
     console.log('(1) CODE:', code);
 
-    let remoteToken = exchangeCodeForToken(code);
+    let remoteToken = await exchangeCodeForToken(code);
     console.log('(2) ACCESS TOKEN:', remoteToken)
 
     let remoteUser = await getRemoteUserInfo(remoteToken);
-    console.log('(3) GITHUB USER', remoteUser)
+    console.log('(3) Wordpress User', remoteUser)
 
     let [user, token] = await getUser(remoteUser);
     req.user = user;
@@ -37,8 +37,7 @@ module.exports = async function authorize(req, res, next) {
 
 }
 
-function exchangeCodeForToken(code) {
-  let array = [CLIENT_ID, API_SERVER, CLIENT_SECRET, code, 'authorization_code'];
+async function exchangeCodeForToken(code) {
   let object = {
     client_id: CLIENT_ID,
     client_secret: CLIENT_SECRET,
@@ -46,20 +45,15 @@ function exchangeCodeForToken(code) {
     grant_type: 'authorization_code',
     code: code
   }
-    superagent.post('https://public-api.wordpress.com/oauth2/token').send(array)
-      .then(response => console.log(response))
-      .catch(e => console.error(e))
+    let token = await superagent.post('https://public-api.wordpress.com/oauth2/token').type('form').send(object)
+    return token.body.access_token;
 
 }
 
 async function getRemoteUserInfo(token) {
-
-  let userResponse =
-    await superagent.get(remoteAPI)
-      .set('user-agent', 'express-app')
-      .set('Authorization', `token ${token}`)
-
-  let user = userResponse.body;
+  let response = await superagent.get(USER_URL).set('Authorization', `Bearer ${token}`)
+  
+  let user = response.body;
 
   return user;
 
@@ -67,7 +61,7 @@ async function getRemoteUserInfo(token) {
 
 async function getUser(remoteUser) {
   let userRecord = {
-    username: remoteUser.login,
+    username: remoteUser.username,
     password: 'oauthpassword'
   }
 
